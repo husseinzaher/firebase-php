@@ -10,6 +10,7 @@ use Kreait\Firebase\Exception\Messaging\InvalidMessage;
 use Kreait\Firebase\Exception\Messaging\NotFound;
 use Kreait\Firebase\Exception\MessagingException;
 use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\MessageTarget;
 use Kreait\Firebase\Messaging\RawMessageFromArray;
 use Kreait\Firebase\Tests\IntegrationTestCase;
 
@@ -364,5 +365,21 @@ final class MessagingTest extends IntegrationTestCase
     {
         $this->expectException(NotFound::class);
         $this->messaging->getAppInstance(self::$unknownToken);
+    }
+
+    /**
+     * @see https://github.com/kreait/firebase-php/issues/700
+     */
+    public function testSendMessageWithHighestPriority(): void
+    {
+        $token = $this->getTestRegistrationToken();
+
+        $message = CloudMessage::withTarget(MessageTarget::TOKEN, $token)
+            ->withData(['foo' => 'bar'])
+            ->withHighestPossiblePriority();
+
+        $this->messaging->send($message);
+
+        $this->addToAssertionCount(1);
     }
 }
