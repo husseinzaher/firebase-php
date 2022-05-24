@@ -19,40 +19,44 @@ final class NotificationTest extends UnitTestCase
         $this->assertSame('', $notification->title());
         $this->assertSame('', $notification->body());
         $this->assertSame('', $notification->imageUrl());
-        $this->assertEquals(['title' => '', 'body' => '', 'image' => ''], $notification->jsonSerialize());
+        $this->assertSame('', $notification->clickAction());
+        $this->assertEquals(['title' => '', 'body' => '', 'image' => '', 'click_action' => ''], $notification->jsonSerialize());
     }
 
     public function testCreateWithValidFields(): void
     {
         $notification = Notification::create('title', 'body')
-            ->withTitle($title = 'My Title')
-            ->withBody($body = 'My Body')
-            ->withImageUrl($imageUrl = 'https://domain.tld/image.ext')
-        ;
+                                    ->withTitle($title = 'My Title')
+                                    ->withBody($body = 'My Body')
+                                    ->withClickAction($clickAction = 'https://domain.tld/image.ext')
+                                    ->withImageUrl($imageUrl = 'https://domain.tld/image.ext');
 
         $this->assertSame($title, $notification->title());
         $this->assertSame($body, $notification->body());
         $this->assertSame($imageUrl, $notification->imageUrl());
+        $this->assertSame($clickAction, $notification->clickAction());
     }
 
     public function testCreateFromValidArray(): void
     {
         $notification = Notification::fromArray($array = [
             'title' => $title = 'My Title',
-            'body' => $body = 'My Body',
+            'body'  => $body = 'My Body',
             'image' => $imageUrl = 'https://domain.tld/image.ext',
+            'click_action' => $clickAction = 'https://domain.tld/image.ext',
         ]);
 
         $this->assertSame($title, $notification->title());
         $this->assertSame($body, $notification->body());
         $this->assertSame($imageUrl, $notification->imageUrl());
+        $this->assertSame($clickAction, $notification->clickAction());
         $this->assertEquals($array, $notification->jsonSerialize());
     }
 
     /**
      * @dataProvider invalidDataProvider
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function testCreateWithInvalidData(array $data): void
     {
